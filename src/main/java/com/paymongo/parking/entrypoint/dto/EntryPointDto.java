@@ -3,15 +3,29 @@ package com.paymongo.parking.entrypoint.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Data transfer object class which contains the entry point name.
+ *
+ */
 public class EntryPointDto {
 
 	private final String name;
 
+	/**
+	 * Creates the {@link EntryPointDto}.
+	 * 
+	 * @param name of the {@link EntryPointDto}
+	 */
 	@JsonCreator
 	public EntryPointDto(@JsonProperty("name") String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Gets the name of the {@link EntryPointDto}
+	 * 
+	 * @return name of the {@link EntryPointDto}
+	 */
 	public String getName() {
 		return name;
 	}

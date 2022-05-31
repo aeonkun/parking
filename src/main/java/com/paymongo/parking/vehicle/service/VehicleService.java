@@ -35,6 +35,12 @@ public class VehicleService {
 
 	}
 
+	/**
+	 * Gets the {@link Vehicle} by plate number
+	 * 
+	 * @param plateNumber plate number of the vehicle
+	 * @return {@link Vehicle} with the provided plate number
+	 */
 	public Vehicle getVehicleByPlateNumber(String plateNumber) {
 		Optional<Vehicle> vehicle = vehicleRepository.findByPlateNumber(plateNumber);
 		if (!vehicle.isPresent()) {

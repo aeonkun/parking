@@ -14,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.paymongo.parking.entrypoint.dao.EntryPointRepository;
 import com.paymongo.parking.entrypoint.domain.EntryPoint;
 import com.paymongo.parking.entrypoint.dto.EntryPointDto;
-import com.paymongo.parking.entrypoint.exception.EntryPointException;
 import com.paymongo.parking.parkingslot.dao.ParkingSlotDistanceRepository;
 
+/**
+ * Service Class for the business logic for entry points
+ *
+ */
 @Service
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class EntryPointService {
@@ -44,6 +47,12 @@ public class EntryPointService {
 		return entryPointRepository.saveAndFlush(entryPoint);
 	}
 
+	/**
+	 * Creates a list of {@link EntryPoint} objects and saves it to the database.
+	 * 
+	 * @param entryPointDtos list of entry points to be created.
+	 * @return list of {@link EntryPoint} that was saved.
+	 */
 	public List<EntryPoint> createEntryPoints(List<EntryPointDto> entryPointDtos) {
 
 		List<EntryPoint> entryPoints = new ArrayList<>();
@@ -63,34 +72,18 @@ public class EntryPointService {
 		return entryPointRepository.findAll();
 	}
 
+	/**
+	 * Gets the {@link EntryPoint} with the supplied name from the database ;
+	 * 
+	 * @param name of the {@link EntryPoint}
+	 * @return {@link EntryPoint} from the database
+	 */
 	public EntryPoint getEntryPointByName(String name) {
 		Optional<EntryPoint> entryPoint = entryPointRepository.findByName(name);
 		if (!entryPoint.isPresent()) {
 			return null;
 		}
 		return entryPoint.get();
-	}
-
-	private void deleteEntryPoint(String name) throws EntryPointException {
-		EntryPoint entryPoint = getEntryPointByName(name);
-
-		if (entryPoint == null) {
-			throw new EntryPointException(EntryPointException.ENTRY_POINT_NOT_FOUND_EXCEPTION);
-		}
-
-		entryPointRepository.delete(entryPoint);
-	}
-
-	public List<String> deleteEntryPoints(List<EntryPointDto> entryPointDtos) throws EntryPointException {
-		List<String> deletedEntryPointNames = new ArrayList<String>();
-		for (EntryPointDto entryPointDto : entryPointDtos) {
-			parkingSlotDistanceRepository.deleteByEntryPointName(entryPointDto.getName());
-			deleteEntryPoint(entryPointDto.getName());
-
-			deletedEntryPointNames.add(entryPointDto.getName());
-		}
-
-		return deletedEntryPointNames;
 	}
 
 }

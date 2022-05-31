@@ -1,5 +1,9 @@
 package com.paymongo.parking.parkingslot.enums;
 
+/**
+ * Enum for parking slot. Contains the size and rate per size.
+ *
+ */
 public enum ParkingSlotEnum {
 
 	SMALL("SP", 20), MEDIUM("MP", 60), LARGE("LP", 100);

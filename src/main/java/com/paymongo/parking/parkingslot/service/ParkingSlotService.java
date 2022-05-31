@@ -69,6 +69,13 @@ public class ParkingSlotService {
 		return parkingSlotRepository.saveAndFlush(parkingSlot);
 	}
 
+	/**
+	 * Creates the parking slots from the given list of {@link ParkingSlotDto}.
+	 * 
+	 * @param parkingSlotDtos list of {@link ParkingSlotDto}.
+	 * @return list of {@link ParkingSlot} created.
+	 * @throws EntryPointException
+	 */
 	public List<ParkingSlot> createParkingSlots(List<ParkingSlotDto> parkingSlotDtos) throws EntryPointException {
 		List<ParkingSlot> parkingSlots = new ArrayList<>();
 
@@ -79,11 +86,22 @@ public class ParkingSlotService {
 		return parkingSlots;
 	}
 
+	/**
+	 * Gets all parking slots from the database
+	 * 
+	 * @return list of {@link ParkingSlot}
+	 */
 	public List<ParkingSlot> getAllParkingSlots() {
 
 		return parkingSlotRepository.findAll();
 	}
 
+	/**
+	 * Gets the parking slot by name.
+	 * 
+	 * @param name of the parking slot
+	 * @return {@link ParkingSlot}
+	 */
 	public ParkingSlot getParkingSlotByName(String name) {
 		Optional<ParkingSlot> parkingSlot = parkingSlotRepository.findByName(name);
 
@@ -94,16 +112,36 @@ public class ParkingSlotService {
 		return parkingSlot.get();
 	}
 
+	/**
+	 * Sets the parking slot status to occupied.
+	 * 
+	 * @param parkingSlot to be set to occupied.
+	 * @return {@link ParkingSlot}
+	 */
 	public ParkingSlot setParkingSlotToOccupied(ParkingSlot parkingSlot) {
 		parkingSlot.setVacant(false);
 		return parkingSlotRepository.saveAndFlush(parkingSlot);
 	}
 
+	/**
+	 * Sets the parking slot status to vacant.
+	 * 
+	 * @param parkingSlot to be set to vacant
+	 * @return {@link ParkingSlot}
+	 */
 	public ParkingSlot setParkingSlotToVacant(ParkingSlot parkingSlot) {
 		parkingSlot.setVacant(true);
 		return parkingSlotRepository.saveAndFlush(parkingSlot);
 	}
 
+	/**
+	 * Gets the parking slot distance by entry point and parking slot from the
+	 * database.
+	 * 
+	 * @param entryPoint  {@link EntryPoint}
+	 * @param parkingSlot {@link ParkingSlot}
+	 * @return
+	 */
 	public ParkingSlotDistance getParkingSlotDistanceByEntryPointAndParkingSlot(EntryPoint entryPoint,
 			ParkingSlot parkingSlot) {
 
@@ -158,6 +196,14 @@ public class ParkingSlotService {
 		return parkingSlotDistance;
 	}
 
+	/**
+	 * Sets the parking slot distance
+	 * 
+	 * @param parkingSlotDistanceDtos list of {@link ParkingSlotDto} to be created.
+	 * @return list of {@link ParkingSlotDistance} that was created.
+	 * @throws EntryPointException
+	 * @throws ParkingSlotException
+	 */
 	public List<ParkingSlotDistance> setParkingSlotDistances(List<ParkingSlotDistanceDto> parkingSlotDistanceDtos)
 			throws EntryPointException, ParkingSlotException {
 
@@ -169,12 +215,27 @@ public class ParkingSlotService {
 		return parkingSlotDistances;
 	}
 
+	/**
+	 * Get all {@link ParkingSlotDistance} by entry point name.
+	 * 
+	 * @param entryPointName
+	 * @return
+	 */
 	public List<ParkingSlotDistance> getAllParkingSlotDistanceByEntryPointName(String entryPointName) {
 		EntryPoint entryPoint = entryPointService.getEntryPointByName(entryPointName);
 
 		return parkingSlotDistanceRepository.findAllByEntryPoint(entryPoint);
 	}
 
+	/**
+	 * Gets the nearest vacant parking slot from the entry point with the acceptable
+	 * sizes.
+	 * 
+	 * @param entryPoint  {@link EntryPoint} that the vehicle entered from.
+	 * @param vehicleSize size of the vehicle.
+	 * @return the {@link ParkingSlot} to be assigned.
+	 * @throws VehicleException
+	 */
 	public ParkingSlot getNearestVacantParkingSlotFromEntryPointWithAcceptableSize(EntryPoint entryPoint,
 			String vehicleSize) throws VehicleException {
 		List<String> acceptableParkingSizes = getAcceptableParkingSlotSizes(vehicleSize);
@@ -188,6 +249,16 @@ public class ParkingSlotService {
 		return parkingSlotDistance.get().getParkingSlot();
 	}
 
+	/**
+	 * Assigns a parking slot to a vehicle.
+	 * 
+	 * @param entryPointName
+	 * @param vehicleSize
+	 * @return
+	 * @throws ParkingSlotException
+	 * @throws EntryPointException
+	 * @throws VehicleException
+	 */
 	public ParkingSlot assignParkingSlot(String entryPointName, String vehicleSize)
 			throws ParkingSlotException, EntryPointException, VehicleException {
 
@@ -208,6 +279,14 @@ public class ParkingSlotService {
 
 	}
 
+	/**
+	 * Gets a list of acceptable parking slot size based on the vehicle size.
+	 * 
+	 * @param vehicleSize size of vehicle
+	 * @return list of string containing the acceptable parking slot sizes for the
+	 *         vehicle size.
+	 * @throws VehicleException
+	 */
 	private List<String> getAcceptableParkingSlotSizes(String vehicleSize) throws VehicleException {
 
 		List<String> acceptableParkingSlotSizes = new ArrayList<>();

@@ -48,6 +48,17 @@ public class ParkingService {
 	@Autowired
 	VehicleService vehicleService;
 
+	/**
+	 * Parks the vehicle.
+	 * 
+	 * @param parkRequestDto contains the entry point name, vehicle details, and
+	 *                       date time of parking.
+	 * @return the details of the parking {@link VehicleParkingDetails}
+	 * @throws ParkingSlotException
+	 * @throws VehicleParkingDetailsException
+	 * @throws EntryPointException
+	 * @throws VehicleException
+	 */
 	public VehicleParkingDetails parkVehicle(ParkRequestDto parkRequestDto)
 			throws ParkingSlotException, VehicleParkingDetailsException, EntryPointException, VehicleException {
 
@@ -73,6 +84,15 @@ public class ParkingService {
 		return vehicleParkingDetails;
 	}
 
+	/**
+	 * Unparks the vehicle.
+	 * 
+	 * @param unparkRequestDto contains the plate number of the vehicle and date
+	 *                         time of departure.
+	 * @return the details of the parking {@link VehicleParkingDetails}.
+	 * @throws VehicleException
+	 * @throws VehicleParkingDetailsException
+	 */
 	public VehicleParkingDetails unparkVehicle(UnparkRequestDto unparkRequestDto)
 			throws VehicleException, VehicleParkingDetailsException {
 
@@ -84,6 +104,15 @@ public class ParkingService {
 
 	}
 
+	/**
+	 * Processes the unpark request.
+	 * 
+	 * @param unparkRequestDto contains the plate number of the vehicle and date
+	 *                         time of departure.
+	 * @return the details of the parking {@link VehicleParkingDetails}.
+	 * @throws VehicleException
+	 * @throws VehicleParkingDetailsException
+	 */
 	public VehicleParkingDetails processVehicleUnparkRequest(UnparkRequestDto unparkRequestDto)
 			throws VehicleException, VehicleParkingDetailsException {
 
@@ -128,6 +157,19 @@ public class ParkingService {
 
 	}
 
+	/**
+	 * Computes the parking fee based on the parking slot size and duration of
+	 * parking.
+	 * 
+	 * @param parkingSlotSize      size of the parking slot.
+	 * @param dateTimeParked       date and time when the vehicle parked.
+	 * @param dateTimeUnparked     date and time when the vehicle departed.
+	 * @param prevDateTimeParked   date and time parked from the previous record of
+	 *                             the vehicle.
+	 * @param prevDateTimeUnparked date and time departed from the previous record
+	 *                             of the vehicle.
+	 * @return the total computed parking fee.
+	 */
 	private int computeParkingFee(String parkingSlotSize, LocalDateTime dateTimeParked, LocalDateTime dateTimeUnparked,
 			LocalDateTime prevDateTimeParked, LocalDateTime prevDateTimeUnparked) {
 
@@ -169,6 +211,14 @@ public class ParkingService {
 
 	}
 
+	/**
+	 * Get the {@link VehicleParkingDetails} based on the plate number and date time
+	 * of departure.
+	 * 
+	 * @param plateNumber      plate number of the vehicle.
+	 * @param dateTimeUnparked date and time of departure.
+	 * @return {@link VehicleParkingDetails}
+	 */
 	private VehicleParkingDetails getVehicleParkingDetailsByVehiclePlateNumberAndDateTimeUnparked(String plateNumber,
 			LocalDateTime dateTimeUnparked) {
 		Optional<VehicleParkingDetails> parkingSlotAssignment = vehicleParkingDetailsRepository
@@ -181,6 +231,13 @@ public class ParkingService {
 		return parkingSlotAssignment.get();
 	}
 
+	/**
+	 * Gets the previous parking details of the vehicle with the provided plate
+	 * number.
+	 * 
+	 * @param plateNumber of the vehicle.
+	 * @return {@link VehicleParkingDetails}
+	 */
 	public VehicleParkingDetails getPreviousParkingDetailsByVehiclePlateNumber(String plateNumber) {
 		Optional<VehicleParkingDetails> parkingSlotAssignment = vehicleParkingDetailsRepository
 				.findFirstByVehiclePlateNumberAndDateTimeUnparkedNotNullOrderByDateTimeUnparkedDesc(plateNumber);
@@ -193,6 +250,12 @@ public class ParkingService {
 		return parkingSlotAssignment.get();
 	}
 
+	/**
+	 * Gets the rate per hour depending on the size of the parking slot.
+	 * 
+	 * @param size of the parking slot.
+	 * @return rate per hour.
+	 */
 	private int getRatePerHour(String size) {
 		int rate = 0;
 
@@ -212,11 +275,24 @@ public class ParkingService {
 		return rate;
 	}
 
+	/**
+	 * Computes the time difference (hours) between the provided dates.
+	 * 
+	 * @param start start of the date time period
+	 * @param end   end of the date time period
+	 * @return time difference in hours
+	 */
 	private double getTimeDifference(LocalDateTime start, LocalDateTime end) {
 
-		return Math.ceil(ChronoUnit.SECONDS.between(start, end) / 3600d);
+		return ChronoUnit.SECONDS.between(start, end) / 3600d;
 	}
 
+	/**
+	 * Checks if the vehicle is already parked.
+	 * 
+	 * @param vehicle vehicle to be checked.
+	 * @return true if the vehicle is parked. false if not.
+	 */
 	private boolean checkIfAlreadyParked(Vehicle vehicle) {
 		boolean isParked = false;
 		VehicleParkingDetails vehicleParkingDetails = getVehicleParkingDetailsByVehiclePlateNumberAndDateTimeUnparked(
